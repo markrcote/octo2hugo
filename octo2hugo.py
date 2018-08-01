@@ -17,11 +17,12 @@ OCTO_DATE_FULL_RE = re.compile('(\d{4}-\d\d-\d\d) (\d\d:\d\d:\d\d) '
 EXPECTED_HEADERS = ('title',)
 
 
-def convert_file(src, dest):
-    print(f'Converting {src}...')
+def convert_file(src_file, dest_dir):
+    print(f'Converting {src_file}...')
 
-    inf = open(src)
-    outf = open(dest, 'w')
+    inf = open(src_file)
+    # Strip "YYYY-MM-DD-" from filename.
+    outf = open(os.path.join(dest_dir, os.path.basename(src_file)[11:]), 'w')
 
     # Keep the headers in a buffer until we know we've successfully parsed them
     # all.
@@ -117,7 +118,7 @@ def main(src, dest):
         return errno.ENOENT
 
     for f in files:
-        if not convert_file(f, os.path.join(dest, os.path.basename(f))):
+        if not convert_file(f, dest):
             return errno.EINVAL
 
     return 0
